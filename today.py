@@ -10,6 +10,7 @@ API_URL = 'https://api.github.com'
 GRAPHQL_URL = f'{API_URL}/graphql'
 USER_NAME = os.environ['USER_NAME']
 ACCESS_TOKEN = os.environ['ACCESS_TOKEN']
+BIRTHDAY = os.environ.get('BIRTHDAY', '').strip()
 HEADERS = {
     'Accept': 'application/vnd.github+json',
     'Authorization': f'Bearer {ACCESS_TOKEN}',
@@ -39,11 +40,8 @@ def github_graphql(query, variables):
     return payload['data']
 
 
-def account_age(created_at):
-    """Return the age of the GitHub account as years, months, and days."""
-    created = datetime.datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-    now = datetime.datetime.now(datetime.timezone.utc)
-    diff = relativedelta.relativedelta(now, created)
+def format_duration(diff):
+    """Format a relativedelta as years, months, and days."""
     return '{} {}, {} {}, {} {}'.format(
         diff.years,
         pluralize('year', diff.years),
@@ -52,6 +50,20 @@ def account_age(created_at):
         diff.days,
         pluralize('day', diff.days),
     )
+
+
+def account_age(created_at):
+    """Return the age of the GitHub account as years, months, and days."""
+    created = datetime.datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+    now = datetime.datetime.now(datetime.timezone.utc)
+    return format_duration(relativedelta.relativedelta(now, created))
+
+
+def birthday_age(birthday):
+    """Return the person's age without exposing the birth date in the repo."""
+    born = datetime.date.fromisoformat(birthday)
+    today = datetime.datetime.now(datetime.timezone.utc).date()
+    return format_duration(relativedelta.relativedelta(today, born))
 
 
 def pluralize(word, value):
@@ -116,10 +128,11 @@ def set_value(root, element_id, value, dots_id=None, target_length=0):
         find_and_replace(root, dots_id, dots)
 
 
-def update_svg(filename, user, repositories, contributions):
+def update_svg(filename, user, repositories, contributions, account_age_data, uptime_data):
     tree = etree.parse(filename)
     root = tree.getroot()
-    set_value(root, 'age_data', account_age(user['created_at']), 'age_data_dots', 24)
+    set_value(root, 'account_age_data', account_age_data, 'account_age_dots', 24)
+    set_value(root, 'uptime_data', uptime_data, 'uptime_dots', 24)
     set_value(root, 'commit_data', contributions['commits'], 'commit_data_dots', 22)
     set_value(root, 'star_data', sum(repo['stargazers_count'] for repo in repositories), 'star_data_dots', 14)
     set_value(root, 'repo_data', len(repositories), 'repo_data_dots', 6)
@@ -132,14 +145,17 @@ if __name__ == '__main__':
     profile = github_get(f'/users/{USER_NAME}')
     repositories = public_repositories()
     contributions = contribution_stats()
+    account_age_data = account_age(profile['created_at'])
+    uptime_data = birthday_age(BIRTHDAY) if BIRTHDAY else account_age_data
     stats = {
-        'account_age': account_age(profile['created_at']),
+        'account_age': account_age_data,
+        'uptime': uptime_data,
         'repos': len(repositories),
         'stars': sum(repo['stargazers_count'] for repo in repositories),
         'commits_1y': contributions['commits'],
         'contributed_repos_1y': contributions['contributed'],
         'followers': profile['followers'],
     }
-    update_svg('dark_mode.svg', profile, repositories, contributions)
-    update_svg('light_mode.svg', profile, repositories, contributions)
+    update_svg('dark_mode.svg', profile, repositories, contributions, account_age_data, uptime_data)
+    update_svg('light_mode.svg', profile, repositories, contributions, account_age_data, uptime_data)
     print('Updated profile stats:', stats)
