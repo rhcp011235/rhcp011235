@@ -30,6 +30,7 @@ jobs:
       - name: Update README file
         env:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BIRTHDAY: ${{ secrets.BIRTHDAY }}
           USER_NAME: rhcp011235
         run: python today.py
       - name: Commit
