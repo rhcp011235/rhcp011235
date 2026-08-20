@@ -128,11 +128,19 @@ def set_value(root, element_id, value, dots_id=None, target_length=0):
         find_and_replace(root, dots_id, dots)
 
 
+def set_aligned_value(root, element_id, value, dots_id, dots_length):
+    """Update a value while keeping its dot leader at a fixed visual column."""
+    value = f'{value:,}' if isinstance(value, int) else str(value)
+    find_and_replace(root, element_id, value)
+    dots = ' ' + ('.' * max(0, dots_length - 2)) + ' '
+    find_and_replace(root, dots_id, dots)
+
+
 def update_svg(filename, user, repositories, contributions, account_age_data, uptime_data):
     tree = etree.parse(filename)
     root = tree.getroot()
-    set_value(root, 'account_age_data', account_age_data, 'account_age_dots', 24)
-    set_value(root, 'uptime_data', uptime_data, 'uptime_dots', 24)
+    set_aligned_value(root, 'account_age_data', account_age_data, 'account_age_dots', 11)
+    set_aligned_value(root, 'uptime_data', uptime_data, 'uptime_dots', 16)
     set_value(root, 'commit_data', contributions['commits'], 'commit_data_dots', 22)
     set_value(root, 'star_data', sum(repo['stargazers_count'] for repo in repositories), 'star_data_dots', 14)
     set_value(root, 'repo_data', len(repositories), 'repo_data_dots', 6)
