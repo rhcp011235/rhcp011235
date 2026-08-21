@@ -21,7 +21,7 @@ text, tspan {white-space: pre;}
 <tspan x="390" y="30">rhcp011235@github</tspan> -———————————————————————————————-—-
 <tspan x="390" y="50" class="cc">. </tspan><tspan class="key">OS</tspan>:<tspan class="cc"> .................. </tspan><tspan class="value" x="630">macOS, Linux, Windows, iOS, Android</tspan>
 <tspan x="390" y="70" class="cc">. </tspan><tspan class="key">Account Age</tspan>:<tspan class="cc" id="account_age_dots"> ......... </tspan><tspan class="value" x="630" id="account_age_data">15 years, 8 months, 2 days</tspan>
-<tspan x="390" y="90" class="cc">. </tspan><tspan class="key">Uptime</tspan>:<tspan class="cc" id="uptime_dots"> .............. </tspan><tspan class="value" x="630" id="uptime_data">44 years, 7 months, 1 day</tspan>
+<tspan x="390" y="90" class="cc">. </tspan><tspan class="key">Uptime</tspan>:<tspan class="cc" id="uptime_dots"> .............. </tspan><tspan class="value" x="630" id="uptime_data">44 years, 7 months, 2 days</tspan>
 <tspan x="390" y="110" class="cc">. </tspan><tspan class="key">Location</tspan>:<tspan class="cc"> ............ </tspan><tspan class="value" x="630">Shenzhen, China</tspan>
 <tspan x="390" y="130" class="cc">. </tspan><tspan class="key">Focus</tspan>:<tspan class="cc"> ............... </tspan><tspan class="value" x="630">Apple Platforms &amp; Self-Hosting</tspan>
 <tspan x="390" y="150" class="cc">. </tspan><tspan class="key">IDE</tspan>:<tspan class="cc"> ................. </tspan><tspan class="value" x="630">VS Code, Xcode, Terminal</tspan>
