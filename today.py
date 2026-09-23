@@ -116,18 +116,6 @@ def find_and_replace(root, element_id, new_text):
         element.text = str(new_text)
 
 
-def set_value(root, element_id, value, dots_id=None, target_length=0):
-    value = f'{value:,}' if isinstance(value, int) else str(value)
-    find_and_replace(root, element_id, value)
-    if dots_id:
-        remaining = max(0, target_length - len(value))
-        if remaining <= 2:
-            dots = {0: '', 1: ' ', 2: '. '}[remaining]
-        else:
-            dots = ' ' + ('.' * remaining) + ' '
-        find_and_replace(root, dots_id, dots)
-
-
 def set_aligned_value(root, element_id, value, dots_id, dots_length):
     """Update a value while keeping its dot leader at a fixed visual column."""
     value = f'{value:,}' if isinstance(value, int) else str(value)
@@ -141,11 +129,11 @@ def update_svg(filename, user, repositories, contributions, account_age_data, up
     root = tree.getroot()
     set_aligned_value(root, 'account_age_data', account_age_data, 'account_age_dots', 11)
     set_aligned_value(root, 'uptime_data', uptime_data, 'uptime_dots', 16)
-    set_value(root, 'commit_data', contributions['commits'], 'commit_data_dots', 22)
-    set_value(root, 'star_data', sum(repo['stargazers_count'] for repo in repositories), 'star_data_dots', 14)
-    set_value(root, 'repo_data', len(repositories), 'repo_data_dots', 6)
-    set_value(root, 'contrib_data', contributions['contributed'])
-    set_value(root, 'follower_data', user['followers'], 'follower_data_dots', 10)
+    set_aligned_value(root, 'repo_data', len(repositories), 'repo_data_dots', 17)
+    set_aligned_value(root, 'contrib_data', contributions['contributed'], 'contrib_data_dots', 6)
+    set_aligned_value(root, 'star_data', sum(repo['stargazers_count'] for repo in repositories), 'star_data_dots', 17)
+    set_aligned_value(root, 'commit_data', contributions['commits'], 'commit_data_dots', 10)
+    set_aligned_value(root, 'follower_data', user['followers'], 'follower_data_dots', 13)
     tree.write(filename, encoding='utf-8', xml_declaration=True)
 
 
